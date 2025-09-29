@@ -298,10 +298,24 @@ Enums:
 
 **Prerequisites**
 
-* JDK 21, Maven, Docker (optional for DB)
-* Spring Boot 3.4.x
+* JDK 21, Maven
+* Docker & Docker Compose (for the provided `infra/` setup)
+* Spring Boot 3.5.x (managed by the project `pom.xml`)
 
-**Run Postgres locally**
+**Option A – Docker Compose (recommended)**
+
+The `infra/` directory mirrors our other services. It contains a Dockerfile for the API, a dedicated test image, and a `docker-compose.yml` that wires the application together with PostgreSQL.
+
+```bash
+cd infra
+docker compose up --build
+```
+
+* `app` runs the packaged Spring Boot application on port `8080`.
+* `db` provides PostgreSQL 16 with data persisted to a named Docker volume.
+* `tests` (disabled by default) can be launched with `docker compose --profile tests up tests` to execute the Maven test suite inside a container.
+
+**Option B – Manual Postgres & local tooling**
 
 ```bash
 docker run --name help-unker-pg -e POSTGRES_PASSWORD=postgres -p 5432:5432 -d postgres:16
@@ -333,9 +347,9 @@ security:
 
 **Run**
 
-```bash
-./mvnw spring-boot:run
-```
+*With Compose running:* `docker compose logs -f app`
+
+*With local tooling:* `./mvnw spring-boot:run`
 
 **Smoke test (curl)**
 
