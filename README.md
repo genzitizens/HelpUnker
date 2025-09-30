@@ -42,8 +42,41 @@ Mobile App ──HTTP──▶ Spring Boot API ──JPA──▶ Postgres
                              │       ├─ Notifier (FCM/APNs)
                              │       ├─ Matcher/Scorer
                              │       └─ Analytics/Audit
-                             └─ Redis (rate limits, presence, cache)
+                            └─ Redis (rate limits, presence, cache)
 ```
+
+## Project structure
+
+The codebase follows a **feature module layout** so that HTTP adapters, application services, and domain logic for a capability
+live together. Each module is split into `application`, `domain`, and `infrastructure` tiers mirroring how we organize other
+services such as the Task Management backend.
+
+```
+src/main/java/com/helpunker
+├── common
+│   ├── exception        # shared exception hierarchy
+│   └── handler          # global exception handler / API error contract
+└── modules
+    ├── helprequest
+    │   ├── application
+    │   │   ├── controller   # REST endpoints
+    │   │   ├── dto          # HTTP payloads (request/response)
+    │   │   └── service      # orchestration, mapping, commands
+    │   ├── domain
+    │   │   ├── model        # JPA entities + aggregates
+    │   │   └── repository   # Spring Data interfaces & specifications
+    │   └── infrastructure
+    │       └── sse          # SSE publisher & transport-facing components
+    ├── assignment
+    │   └── domain
+    ├── outbox
+    │   └── domain
+    └── user
+        └── domain
+```
+
+Shared infrastructure or cross-cutting elements belong under `common/`, while new feature areas should follow the same
+`modules/<feature>/{application,domain,infrastructure}` convention to stay consistent.
 
 ---
 
