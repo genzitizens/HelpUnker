@@ -1,13 +1,12 @@
-package com.UnkerService;
+package com.helpunker;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class UnkerServiceApplicationTests {
+class HelpUnkerApplicationTests {
 
-	@Test
-	void contextLoads() {
-	}
-
+    @Test
+    void contextLoads() {
+    }
 }
