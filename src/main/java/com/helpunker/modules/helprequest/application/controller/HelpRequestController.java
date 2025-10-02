@@ -9,6 +9,13 @@ import com.helpunker.modules.helprequest.application.service.HelpRequestService;
 import com.helpunker.modules.helprequest.application.service.command.CreateHelpRequestCommand;
 import com.helpunker.modules.helprequest.domain.model.RequestStatus;
 import com.helpunker.modules.helprequest.infrastructure.sse.BoardEventPublisher;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.net.URI;
 import java.util.List;
@@ -35,6 +42,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 @RestController
 @RequestMapping
 @Validated
+@Tag(name = "Help Requests", description = "Operations related to managing help requests")
 public class HelpRequestController {
 
     private final HelpRequestService requestService;
@@ -47,8 +55,24 @@ public class HelpRequestController {
     }
 
     @PostMapping(value = "/requests", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Create a help request", description = "Creates a new help request for the provided user ID.")
+    @ApiResponses(
+            value = {
+                @ApiResponse(responseCode = "201", description = "Request created successfully"),
+                @ApiResponse(
+                        responseCode = "400",
+                        description = "Invalid payload",
+                        content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE))
+            })
     public ResponseEntity<HelpRequestResponse> createRequest(
-            @RequestHeader("X-User-Id") UUID elderlyId, @Valid @RequestBody CreateHelpRequestRequest requestBody) {
+            @Parameter(
+                            in = ParameterIn.HEADER,
+                            name = "X-User-Id",
+                            required = true,
+                            description = "Identifier of the elderly user creating the help request")
+                    @RequestHeader("X-User-Id")
+                    UUID elderlyId,
+            @Valid @RequestBody CreateHelpRequestRequest requestBody) {
         CreateHelpRequestCommand command = toCommand(elderlyId, requestBody);
         HelpRequestResponse response = requestService.createRequest(command);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
@@ -59,14 +83,31 @@ public class HelpRequestController {
     }
 
     @GetMapping(value = "/requests", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(
+            summary = "List help requests",
+            description = "Retrieves a paginated list of help requests using optional filters such as status, location and elderly ID.")
     public ResponseEntity<PagedResponse<HelpRequestResponse>> listRequests(
-            @RequestParam(name = "status", required = false) RequestStatus status,
-            @RequestParam(name = "elderlyId", required = false) UUID elderlyId,
-            @RequestParam(name = "near", required = false) String near,
-            @RequestParam(name = "radiusKm", required = false) Double radiusKm,
-            @RequestParam(name = "page", defaultValue = "0") int page,
-            @RequestParam(name = "size", defaultValue = "20") int size,
-            @RequestParam(name = "sort", defaultValue = "createdAt,DESC") String sort) {
+            @Parameter(description = "Filter by current request status")
+                    @RequestParam(name = "status", required = false)
+                    RequestStatus status,
+            @Parameter(description = "Filter requests created by a specific elderly user")
+                    @RequestParam(name = "elderlyId", required = false)
+                    UUID elderlyId,
+            @Parameter(description = "Find requests near this coordinate pair, formatted as '<lat>,<lng>'")
+                    @RequestParam(name = "near", required = false)
+                    String near,
+            @Parameter(description = "Radius in kilometres to use with the near parameter")
+                    @RequestParam(name = "radiusKm", required = false)
+                    Double radiusKm,
+            @Parameter(description = "Page number to retrieve", example = "0")
+                    @RequestParam(name = "page", defaultValue = "0")
+                    int page,
+            @Parameter(description = "Number of elements per page", example = "20")
+                    @RequestParam(name = "size", defaultValue = "20")
+                    int size,
+            @Parameter(description = "Sort property and direction formatted as 'property,direction'", example = "createdAt,DESC")
+                    @RequestParam(name = "sort", defaultValue = "createdAt,DESC")
+                    String sort) {
 
         Pageable pageable = PageRequest.of(page, size, toSort(sort));
         Double latitude = null;
@@ -93,25 +134,38 @@ public class HelpRequestController {
     }
 
     @GetMapping(value = "/requests/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<HelpRequestResponse> getRequest(@PathVariable("id") UUID id) {
+    @Operation(summary = "Get request details", description = "Fetches a single help request by its identifier.")
+    public ResponseEntity<HelpRequestResponse> getRequest(
+            @Parameter(description = "Identifier of the help request") @PathVariable("id") UUID id) {
         HelpRequestResponse response = requestService.getRequest(id);
         return ResponseEntity.ok(response);
     }
 
     @PostMapping(value = "/requests/{id}/cancel")
+    @Operation(summary = "Cancel a request", description = "Cancels an active help request.")
     public ResponseEntity<HelpRequestResponse> cancelRequest(
-            @PathVariable("id") UUID id, @RequestHeader("X-User-Id") UUID actorId) {
+            @Parameter(description = "Identifier of the help request") @PathVariable("id") UUID id,
+            @Parameter(
+                            in = ParameterIn.HEADER,
+                            name = "X-User-Id",
+                            required = true,
+                            description = "Identifier of the user performing the cancellation")
+                    @RequestHeader("X-User-Id")
+                    UUID actorId) {
         HelpRequestResponse response = requestService.cancelRequest(id, actorId);
         return ResponseEntity.ok(response);
     }
 
     @GetMapping(value = "/stream/board", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    @Operation(summary = "Stream board updates", description = "Subscribes to server-sent events for overall board activity.")
     public SseEmitter streamBoard() {
         return eventPublisher.registerBoardEmitter();
     }
 
     @GetMapping(value = "/stream/requests/{id}", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public SseEmitter streamRequest(@PathVariable("id") UUID id) {
+    @Operation(summary = "Stream request updates", description = "Subscribes to server-sent events for a specific help request.")
+    public SseEmitter streamRequest(
+            @Parameter(description = "Identifier of the help request") @PathVariable("id") UUID id) {
         return eventPublisher.registerRequestEmitter(id);
     }
 
