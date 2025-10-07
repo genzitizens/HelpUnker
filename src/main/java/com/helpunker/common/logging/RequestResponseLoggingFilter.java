@@ -45,7 +45,7 @@ public class RequestResponseLoggingFilter extends OncePerRequestFilter {
             filterChain.doFilter(requestWrapper, responseWrapper);
         } finally {
             long duration = System.currentTimeMillis() - start;
-            logExchange(requestWrapper, responseWrapper, duration);
+            this.logExchange(requestWrapper, responseWrapper, duration);
             responseWrapper.copyBodyToResponse();
         }
     }
@@ -57,8 +57,8 @@ public class RequestResponseLoggingFilter extends OncePerRequestFilter {
         String target = queryString != null ? uri + "?" + queryString : uri;
         String remoteAddress = request.getRemoteAddr();
         int status = response.getStatus();
-        String requestBody = getPayload(request.getContentAsByteArray(), request.getCharacterEncoding(), request.getContentType());
-        String responseBody = getPayload(response.getContentAsByteArray(), response.getCharacterEncoding(), response.getContentType());
+        String requestBody = this.getPayload(request.getContentAsByteArray(), request.getCharacterEncoding(), request.getContentType());
+        String responseBody = this.getPayload(response.getContentAsByteArray(), response.getCharacterEncoding(), response.getContentType());
 
         log.info("HTTP {} {} from {} -> status {} ({} ms) | requestBody={} | responseBody={}",
                 method, target, remoteAddress, status, duration, requestBody, responseBody);
@@ -82,11 +82,11 @@ public class RequestResponseLoggingFilter extends OncePerRequestFilter {
         if (content == null || content.length == 0) {
             return "<empty>";
         }
-        if (!isReadableContentType(contentType)) {
+        if (!this.isReadableContentType(contentType)) {
             return "<non-readable payload>";
         }
 
-        Charset charset = resolveCharset(encoding);
+        Charset charset = this.resolveCharset(encoding);
         String payload = new String(content, charset);
         if (payload.length() <= MAX_PAYLOAD_LENGTH) {
             return payload;
