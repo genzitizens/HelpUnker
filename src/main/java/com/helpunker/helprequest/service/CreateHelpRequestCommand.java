@@ -1,4 +1,4 @@
-package com.helpunker.helprequest.service.command;
+package com.helpunker.helprequest.service;
 
 import java.math.BigDecimal;
 import java.util.List;

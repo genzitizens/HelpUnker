@@ -1,4 +1,4 @@
-package com.helpunker.helprequest.domain;
+package com.helpunker.helprequest.entity;
 
 import com.helpunker.user.User;
 

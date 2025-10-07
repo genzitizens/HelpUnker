@@ -1,4 +1,4 @@
-package com.helpunker.helprequest.domain;
+package com.helpunker.helprequest.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

@@ -1,7 +1,7 @@
 package com.helpunker.helprequest.repository;
 
-import com.helpunker.helprequest.domain.HelpRequest;
-import com.helpunker.helprequest.domain.RequestStatus;
+import com.helpunker.helprequest.entity.HelpRequest;
+import com.helpunker.helprequest.entity.RequestStatus;
 import java.math.BigDecimal;
 import java.util.UUID;
 import org.springframework.data.jpa.domain.Specification;

@@ -6,8 +6,8 @@ import com.helpunker.helprequest.dto.response.HelpRequestResponse;
 import com.helpunker.helprequest.dto.response.PagedResponse;
 import com.helpunker.helprequest.service.HelpRequestSearchCriteria;
 import com.helpunker.helprequest.service.HelpRequestService;
-import com.helpunker.helprequest.service.command.CreateHelpRequestCommand;
-import com.helpunker.helprequest.domain.RequestStatus;
+import com.helpunker.helprequest.service.CreateHelpRequestCommand;
+import com.helpunker.helprequest.entity.RequestStatus;
 import com.helpunker.helprequest.sse.BoardEventPublisher;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -73,7 +73,7 @@ public class HelpRequestController {
                     @RequestHeader("X-User-Id")
                     UUID elderlyId,
             @Valid @RequestBody CreateHelpRequestRequest requestBody) {
-        CreateHelpRequestCommand command = toCommand(elderlyId, requestBody);
+        CreateHelpRequestCommand command = this.toCommand(elderlyId, requestBody);
         HelpRequestResponse response = requestService.createRequest(command);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
@@ -109,7 +109,7 @@ public class HelpRequestController {
                     @RequestParam(name = "sort", defaultValue = "createdAt,DESC")
                     String sort) {
 
-        Pageable pageable = PageRequest.of(page, size, toSort(sort));
+        Pageable pageable = PageRequest.of(page, size, this.toSort(sort));
         Double latitude = null;
         Double longitude = null;
         if (StringUtils.hasText(near)) {
@@ -190,7 +190,7 @@ public class HelpRequestController {
         String[] tokens = sort.split(",");
         String property = tokens[0];
         Sort.Direction direction = tokens.length > 1 ? Sort.Direction.fromString(tokens[1]) : Sort.Direction.ASC;
-        return Sort.by(direction, toEntityField(property));
+        return Sort.by(direction, this.toEntityField(property));
     }
 
     private String toEntityField(String property) {

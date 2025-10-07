@@ -1,6 +1,6 @@
 package com.helpunker.helprequest.dto.response;
 
-import com.helpunker.helprequest.domain.RequestStatus;
+import com.helpunker.helprequest.entity.RequestStatus;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.List;

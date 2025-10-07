@@ -1,6 +1,6 @@
 package com.helpunker.assignment;
 
-import com.helpunker.helprequest.domain.HelpRequest;
+import com.helpunker.helprequest.entity.HelpRequest;
 import com.helpunker.user.User;
 
 import jakarta.persistence.Column;

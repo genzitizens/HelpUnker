@@ -1,4 +1,4 @@
-package com.helpunker.outbox;
+package com.helpunker.outbox.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

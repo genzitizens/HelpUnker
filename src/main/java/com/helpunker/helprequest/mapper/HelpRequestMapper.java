@@ -1,9 +1,9 @@
-package com.helpunker.helprequest.service.mapper;
+package com.helpunker.helprequest.mapper;
 
 import com.helpunker.helprequest.dto.response.HelpRequestResponse;
 import com.helpunker.helprequest.dto.response.RequestPhotoResponse;
-import com.helpunker.helprequest.domain.HelpRequest;
-import com.helpunker.helprequest.domain.RequestPhoto;
+import com.helpunker.helprequest.entity.HelpRequest;
+import com.helpunker.helprequest.entity.RequestPhoto;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.stereotype.Component;
