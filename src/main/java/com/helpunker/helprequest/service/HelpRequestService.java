@@ -12,7 +12,7 @@ import com.helpunker.helprequest.repository.HelpRequestSpecifications;
 import com.helpunker.helprequest.sse.BoardEventPublisher;
 import com.helpunker.helprequest.sse.RequestEvent;
 import com.helpunker.helprequest.sse.RequestEventType;
-import com.helpunker.user.User;
+import com.helpunker.user.entity.User;
 import com.helpunker.user.UserRole;
 import com.helpunker.user.repository.UserRepository;
 import java.util.List;

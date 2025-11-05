@@ -1,6 +1,6 @@
 package com.helpunker.user.repository;
 
-import com.helpunker.user.DeviceToken;
+import com.helpunker.user.entity.DeviceToken;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;

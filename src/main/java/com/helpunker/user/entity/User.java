@@ -1,5 +1,6 @@
-package com.helpunker.user;
+package com.helpunker.user.entity;
 
+import com.helpunker.user.UserRole;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;

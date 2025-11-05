@@ -1,6 +1,6 @@
 package com.helpunker.helprequest.entity;
 
-import com.helpunker.user.User;
+import com.helpunker.user.entity.User;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
